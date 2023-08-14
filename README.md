@@ -1,6 +1,6 @@
-# KarmaCoin Server
-This repo contains the source code for KarmaCoin server. The server is written in Rust.
-The server provides the KarmaCoin API, implements a KarmaCoin blockchain node and a mobile phone numbers verifier.
+# KarmaCoin Verifier
+
+This repo contains the code for the Karmachain 2.0 human verification service. The service is written in Rust and is using an external authentication provider.
 
 To learn more about KarmaCoin visit https://karmaco.in
 
@@ -30,16 +30,8 @@ Install the following packages via apt-get or similar:
 ```cargo build --release```
 
 ## Testing
-- Make sure you have a valid `verifier_config.yaml` file in `crates/server/` with the following syntax:
-
-```YAML
-verifier.sms_gateway:
-  auth_value: Basic [TWILLO_AUTH_TOKEN]
-  from_number: [TWILLO_SEND_SMS_FROM_NUMBER]
-  api_endpoint: [TWILLO_API_ENDPOINT]
-```
-
-Check `crates/server/verifier_config_template.yaml` for an example.
+Make sure you have a valid config.yaml. 
+Check `config_template.yaml` for config file schema.
 
 - Use [cargo-nextest](https://nexte.st/) runner.
 
@@ -48,7 +40,7 @@ Check `crates/server/verifier_config_template.yaml` for an example.
 
 ## Running
 
-To start a server that runs the KarmaCoin blockchain node and provides the KarmaCoin API and verifier API, create a config file `verifier.yaml` with the authentication tokens for the service providers used by the verifier, and provide the path to the config file to the server app.
+Create a config file `config.yaml` with the authentication tokens for the service providers used by the verifier, and provide the path to the config file to the server app.
 
 ### Running a dev build
 ```bash
@@ -62,9 +54,6 @@ cargo build
 cargo build -- release
 ./target/debug/server-app
 ```
-
-
-
 ---
 
 ## Dev Notes
@@ -85,7 +74,7 @@ protoc --dart_out=grpc:dart  karma_coin/core_types/*.proto
 and copy over the generated files to your Dart project.
 
 ### Timestamps
-All timestamps should be in miliseconds using chrono. Use milliseonds in clients when working with timestamps.
+All timestamps should be in milliseconds using chrono. Use milliseconds in clients when working with timestamps.
 
 ```rust
 use chrono::prelude::*;
@@ -95,26 +84,15 @@ let t = Utc::now().timestamp_millis() as u64;
 ### Xactor Usage 
 Xactor (unlike Actix) gives us nice and clean async syntax for actor messages. However, be aware that calling an actor message from the body of the same actor's message handler, will deadlock. It is easy to spend hours on such bugs. Just factor out impl into an async fn and call it from different message handlers....
 
-### Architecture
-- Uses `xactors` (over `tokio` runtime) actors pattern. Async actors that can return responses to messages.
-- Network protocols are defined in `protobufs` language.
-- Uses `tonic` and `prost` for grpc api services.
-- Xactor used as local lib - enhanced with new features that required low-level integration such as pub/sub.
-- High-level system components are all `xactor services` - registered in the system and restarted automatically when called after they crash.
-- Store is implemented using `rocksdb`.
-
 ### Code Structure
 - `base` - shared types.
 - `crypto` - low-level crypto lib.
-- `client` - Simple client with a grpc api for code reuse in testing servers and client-to-client p2p flows.
-- `client-app` - Simple terminal client app with support to config file, cli flags and logging.
-- `db` - Adds ttl capabilities to rocksdb data stoe.
 - `server` - Server implementation.
 - `server-app` - Simple console server app.
 
 ---
 
-Copyright (c) 2022 by the KarmaCoin Authors. This work is licensed under the [KarmaCoin License](https://github.com/karma-coin/.github/blob/main/LICENSE).
+Copyright (c) 2023 by the KarmaCoin Authors. This work is licensed under the [KarmaCoin License](https://github.com/karma-coin/.github/blob/main/LICENSE).
 
 
 
