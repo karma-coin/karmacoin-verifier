@@ -1,0 +1,79 @@
+// Copyright (c) 2022, KarmaCoin Authors. a@karmaco.in.
+// This work is licensed under the KarmaCoin v0.1.0 license published in the LICENSE file of this repo.
+//
+
+syntax = "proto3";
+package karma_coin.verifier;
+
+// mobile phone numbers verifier api service
+service VerifierService {
+
+  // Send verification code to the user's mobile number via whatsapp
+  rpc SendVerificationCode(SendVerificationCodeRequest) returns (SendVerificationCodeResponse);
+
+  /// Verify number using verification provider code
+  rpc VerifyNumber(VerifyNumberRequest) returns (VerifyNumberResponse);
+}
+
+message SendVerificationCodeRequest {
+  string mobile_number = 1;
+}
+
+message SendVerificationCodeResponse {
+  string session_id = 1;
+}
+
+message VerifyNumberRequest {
+  // serialized VerifyNumberRequestDataEx
+  bytes data = 1;
+
+  // User signature of binary data field 1
+  // Public key is account_id in the data
+  bytes signature = 2;
+}
+
+message VerifyNumberResponse {
+  // serialized UserVerificationData. This data should be scale and not protobuf encoded
+  bytes data = 1;
+  // signature over data - should use kc2 signature sheme
+  string signature = 2;
+  // verification result
+  VerificationResult result = 3;
+}
+
+enum VerificationResult {
+  VERIFICATION_RESULT_UNSPECIFIED = 0;
+  VERIFICATION_RESULT_USER_NAME_TAKEN = 1; // there's already a user with the requested user name
+  VERIFICATION_RESULT_VERIFIED = 2; // user is verified using provided token
+  VERIFICATION_RESULT_UNVERIFIED = 3; // user is not verifier using provided token
+  VERIFICATION_RESULT_MISSING_DATA = 4; // request is missing required data
+  VERIFICATION_RESULT_INVALID_SIGNATURE = 5; // bad client signature
+  VERIFICATION_RESULT_ACCOUNT_MISMATCH = 6; // different account associated with phone number
+}
+
+// Created and signed by a verifier to attest that an account owns a mobile number
+// Includes mobile number hash instead of mobile number in response
+// Signature is externally available
+// todo: this should be scale encoded
+message UserVerificationData {
+  string verifier_account_id = 1;
+  uint64 timestamp = 2;
+  string account_id = 3;
+  string mobile_number_hash = 4;
+  string requested_user_name = 5;
+  string signature = 6;
+}
+
+message VerifyNumberRequestData {
+  uint64 timestamp = 1;
+  string account_id = 2;
+  string mobile_number = 3;
+  string requested_user_name = 4;
+  // optional token to bypass verification
+  bytes bypass_token = 5;
+  // Auth provider verification code
+  string verification_code = 6;
+  // Verification session id
+  string verification_sid = 7;
+}
+

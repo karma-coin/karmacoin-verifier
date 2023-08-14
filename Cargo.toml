@@ -1,0 +1,11 @@
+[workspace]
+
+members = [
+    "crates/base",
+    "crates/xactor",
+    "crates/xactor-derive",
+    "crates/xactor-playground",
+    "crates/crypto",
+    "crates/server",
+    "crates/server-app",
+]
