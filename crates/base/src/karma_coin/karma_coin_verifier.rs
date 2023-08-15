@@ -7,13 +7,17 @@ pub struct SendVerificationCodeRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SendVerificationCodeResponse {
-    #[prost(string, tag = "1")]
+    #[prost(enumeration = "SendVerificationCodeResult", tag = "1")]
+    pub result: i32,
+    #[prost(string, tag = "2")]
     pub session_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub error_message: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyNumberRequest {
-    /// serialized VerifyNumberRequestDataEx
+    /// protobuf serialized VerifyNumberRequestData
     #[prost(bytes = "vec", tag = "1")]
     pub data: ::prost::alloc::vec::Vec<u8>,
     /// User signature of binary data field 1
@@ -24,13 +28,10 @@ pub struct VerifyNumberRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyNumberResponse {
-    /// serialized UserVerificationData. This data should be scale and not protobuf encoded
+    /// serialized SIGNED UserVerificationData. This data should be scale and not protobuf encoded
     #[prost(bytes = "vec", tag = "1")]
     pub data: ::prost::alloc::vec::Vec<u8>,
-    /// signature over data - should use kc2 signature sheme
-    #[prost(string, tag = "2")]
-    pub signature: ::prost::alloc::string::String,
-    /// verification result
+    /// verification result for client feedback
     #[prost(enumeration = "VerificationResult", tag = "3")]
     pub result: i32,
 }
@@ -48,9 +49,9 @@ pub struct UserVerificationData {
     #[prost(string, tag = "3")]
     pub account_id: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
-    pub mobile_number_hash: ::prost::alloc::string::String,
+    pub phone_number_hash: ::prost::alloc::string::String,
     #[prost(string, tag = "5")]
-    pub requested_user_name: ::prost::alloc::string::String,
+    pub user_name: ::prost::alloc::string::String,
     #[prost(string, tag = "6")]
     pub signature: ::prost::alloc::string::String,
 }
@@ -62,12 +63,12 @@ pub struct VerifyNumberRequestData {
     #[prost(string, tag = "2")]
     pub account_id: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
-    pub mobile_number: ::prost::alloc::string::String,
+    pub phone_number: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
-    pub requested_user_name: ::prost::alloc::string::String,
+    pub user_name: ::prost::alloc::string::String,
     /// optional token to bypass verification
-    #[prost(bytes = "vec", tag = "5")]
-    pub bypass_token: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag = "5")]
+    pub bypass_token: ::prost::alloc::string::String,
     /// Auth provider verification code
     #[prost(string, tag = "6")]
     pub verification_code: ::prost::alloc::string::String,
@@ -77,20 +78,53 @@ pub struct VerifyNumberRequestData {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
+pub enum SendVerificationCodeResult {
+    Unspecified = 0,
+    Sent = 1,
+    Failed = 2,
+    InvalidUserData = 3,
+}
+impl SendVerificationCodeResult {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            SendVerificationCodeResult::Unspecified => {
+                "SEND_VERIFICATION_CODE_RESULT_UNSPECIFIED"
+            }
+            SendVerificationCodeResult::Sent => "SEND_VERIFICATION_CODE_RESULT_SENT",
+            SendVerificationCodeResult::Failed => "SEND_VERIFICATION_CODE_RESULT_FAILED",
+            SendVerificationCodeResult::InvalidUserData => {
+                "SEND_VERIFICATION_CODE_RESULT_INVALID_USER_DATA"
+            }
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "SEND_VERIFICATION_CODE_RESULT_UNSPECIFIED" => Some(Self::Unspecified),
+            "SEND_VERIFICATION_CODE_RESULT_SENT" => Some(Self::Sent),
+            "SEND_VERIFICATION_CODE_RESULT_FAILED" => Some(Self::Failed),
+            "SEND_VERIFICATION_CODE_RESULT_INVALID_USER_DATA" => {
+                Some(Self::InvalidUserData)
+            }
+            _ => None,
+        }
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
 pub enum VerificationResult {
     Unspecified = 0,
-    /// there's already a user with the requested user name
-    UserNameTaken = 1,
     /// user is verified using provided token
     Verified = 2,
-    /// user is not verifier using provided token
-    Unverified = 3,
     /// request is missing required data
     MissingData = 4,
+    Failed = 5,
     /// bad client signature
-    InvalidSignature = 5,
-    /// different account associated with phone number
-    AccountMismatch = 6,
+    InvalidSignature = 6,
 }
 impl VerificationResult {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -100,26 +134,22 @@ impl VerificationResult {
     pub fn as_str_name(&self) -> &'static str {
         match self {
             VerificationResult::Unspecified => "VERIFICATION_RESULT_UNSPECIFIED",
-            VerificationResult::UserNameTaken => "VERIFICATION_RESULT_USER_NAME_TAKEN",
             VerificationResult::Verified => "VERIFICATION_RESULT_VERIFIED",
-            VerificationResult::Unverified => "VERIFICATION_RESULT_UNVERIFIED",
             VerificationResult::MissingData => "VERIFICATION_RESULT_MISSING_DATA",
+            VerificationResult::Failed => "VERIFICATION_RESULT_FAILED",
             VerificationResult::InvalidSignature => {
                 "VERIFICATION_RESULT_INVALID_SIGNATURE"
             }
-            VerificationResult::AccountMismatch => "VERIFICATION_RESULT_ACCOUNT_MISMATCH",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
             "VERIFICATION_RESULT_UNSPECIFIED" => Some(Self::Unspecified),
-            "VERIFICATION_RESULT_USER_NAME_TAKEN" => Some(Self::UserNameTaken),
             "VERIFICATION_RESULT_VERIFIED" => Some(Self::Verified),
-            "VERIFICATION_RESULT_UNVERIFIED" => Some(Self::Unverified),
             "VERIFICATION_RESULT_MISSING_DATA" => Some(Self::MissingData),
+            "VERIFICATION_RESULT_FAILED" => Some(Self::Failed),
             "VERIFICATION_RESULT_INVALID_SIGNATURE" => Some(Self::InvalidSignature),
-            "VERIFICATION_RESULT_ACCOUNT_MISMATCH" => Some(Self::AccountMismatch),
             _ => None,
         }
     }

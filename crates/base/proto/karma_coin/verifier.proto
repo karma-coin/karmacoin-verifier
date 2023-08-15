@@ -20,11 +20,13 @@ message SendVerificationCodeRequest {
 }
 
 message SendVerificationCodeResponse {
-  string session_id = 1;
+  SendVerificationCodeResult result = 1;
+  string session_id = 2;
+  string error_message = 3;
 }
 
 message VerifyNumberRequest {
-  // serialized VerifyNumberRequestDataEx
+  // protobuf serialized VerifyNumberRequestData
   bytes data = 1;
 
   // User signature of binary data field 1
@@ -33,22 +35,24 @@ message VerifyNumberRequest {
 }
 
 message VerifyNumberResponse {
-  // serialized UserVerificationData. This data should be scale and not protobuf encoded
+  // serialized SIGNED UserVerificationData. This data should be scale and not protobuf encoded
   bytes data = 1;
-  // signature over data - should use kc2 signature sheme
-  string signature = 2;
-  // verification result
+  // verification result for client feedback
   VerificationResult result = 3;
 }
 
+enum SendVerificationCodeResult {
+  SEND_VERIFICATION_CODE_RESULT_UNSPECIFIED = 0;
+  SEND_VERIFICATION_CODE_RESULT_SENT = 1;
+  SEND_VERIFICATION_CODE_RESULT_FAILED = 2;
+  SEND_VERIFICATION_CODE_RESULT_INVALID_USER_DATA =3;
+}
 enum VerificationResult {
   VERIFICATION_RESULT_UNSPECIFIED = 0;
-  VERIFICATION_RESULT_USER_NAME_TAKEN = 1; // there's already a user with the requested user name
   VERIFICATION_RESULT_VERIFIED = 2; // user is verified using provided token
-  VERIFICATION_RESULT_UNVERIFIED = 3; // user is not verifier using provided token
   VERIFICATION_RESULT_MISSING_DATA = 4; // request is missing required data
-  VERIFICATION_RESULT_INVALID_SIGNATURE = 5; // bad client signature
-  VERIFICATION_RESULT_ACCOUNT_MISMATCH = 6; // different account associated with phone number
+  VERIFICATION_RESULT_FAILED = 5;
+  VERIFICATION_RESULT_INVALID_SIGNATURE = 6; // bad client signature
 }
 
 // Created and signed by a verifier to attest that an account owns a mobile number
@@ -59,18 +63,18 @@ message UserVerificationData {
   string verifier_account_id = 1;
   uint64 timestamp = 2;
   string account_id = 3;
-  string mobile_number_hash = 4;
-  string requested_user_name = 5;
+  string phone_number_hash = 4;
+  string user_name = 5;
   string signature = 6;
 }
 
 message VerifyNumberRequestData {
   uint64 timestamp = 1;
   string account_id = 2;
-  string mobile_number = 3;
-  string requested_user_name = 4;
+  string phone_number = 3;
+  string user_name = 4;
   // optional token to bypass verification
-  bytes bypass_token = 5;
+  string bypass_token = 5;
   // Auth provider verification code
   string verification_code = 6;
   // Verification session id

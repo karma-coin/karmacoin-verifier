@@ -3,16 +3,16 @@
 
 verifier:
   name: Verifier 1
-  private_key: [private key hex]
-  public_key: [pub key hex]
+  private_key: [xxx]
+  public_key: [xxx]
+  key_password: [xxx]
+  # verifier mnemonic
+  key_mnemonic: [xxx]
+  # address generated from above key - informational only
+  public_key_ss58: [xxx]
+  bypass_token: [xxx]
 
-  # Verifier SMS invites configuration
-  sms_gateway:
-    auth_value: [ TWILIO AUTH TOKEN ]
-    from_number: [ TWILIO SMS SENDER PHONE NUMBER ]
-    api_endpoint: [ TWILIO API ENDPOINT ]
-
-block_producer:
-  name: Block producer 1
-  private_key: [private key hex]
-  public_key: [public key hex]
+twilio:
+  account_sid: [xxx]
+  auth_token: [xxx]
+  service_id: [xxx]
