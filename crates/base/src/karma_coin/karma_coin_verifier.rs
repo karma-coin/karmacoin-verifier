@@ -91,9 +91,7 @@ impl SendVerificationCodeResult {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            SendVerificationCodeResult::Unspecified => {
-                "SEND_VERIFICATION_CODE_RESULT_UNSPECIFIED"
-            }
+            SendVerificationCodeResult::Unspecified => "SEND_VERIFICATION_CODE_RESULT_UNSPECIFIED",
             SendVerificationCodeResult::Sent => "SEND_VERIFICATION_CODE_RESULT_SENT",
             SendVerificationCodeResult::Failed => "SEND_VERIFICATION_CODE_RESULT_FAILED",
             SendVerificationCodeResult::InvalidUserData => {
@@ -107,9 +105,7 @@ impl SendVerificationCodeResult {
             "SEND_VERIFICATION_CODE_RESULT_UNSPECIFIED" => Some(Self::Unspecified),
             "SEND_VERIFICATION_CODE_RESULT_SENT" => Some(Self::Sent),
             "SEND_VERIFICATION_CODE_RESULT_FAILED" => Some(Self::Failed),
-            "SEND_VERIFICATION_CODE_RESULT_INVALID_USER_DATA" => {
-                Some(Self::InvalidUserData)
-            }
+            "SEND_VERIFICATION_CODE_RESULT_INVALID_USER_DATA" => Some(Self::InvalidUserData),
             _ => None,
         }
     }
@@ -137,9 +133,7 @@ impl VerificationResult {
             VerificationResult::Verified => "VERIFICATION_RESULT_VERIFIED",
             VerificationResult::MissingData => "VERIFICATION_RESULT_MISSING_DATA",
             VerificationResult::Failed => "VERIFICATION_RESULT_FAILED",
-            VerificationResult::InvalidSignature => {
-                "VERIFICATION_RESULT_INVALID_SIGNATURE"
-            }
+            VerificationResult::InvalidSignature => "VERIFICATION_RESULT_INVALID_SIGNATURE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -157,8 +151,8 @@ impl VerificationResult {
 /// Generated client implementations.
 pub mod verifier_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     /// mobile phone numbers verifier api service
     #[derive(Debug, Clone)]
     pub struct VerifierServiceClient<T> {
@@ -203,9 +197,8 @@ pub mod verifier_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::BoxBody>,
-            >>::Error: Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
         {
             VerifierServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -228,19 +221,13 @@ pub mod verifier_service_client {
         pub async fn send_verification_code(
             &mut self,
             request: impl tonic::IntoRequest<super::SendVerificationCodeRequest>,
-        ) -> Result<
-            tonic::Response<super::SendVerificationCodeResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::SendVerificationCodeResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/karma_coin.verifier.VerifierService/SendVerificationCode",
@@ -252,15 +239,12 @@ pub mod verifier_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::VerifyNumberRequest>,
         ) -> Result<tonic::Response<super::VerifyNumberResponse>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/karma_coin.verifier.VerifierService/VerifyNumber",
@@ -307,10 +291,7 @@ pub mod verifier_service_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -338,10 +319,7 @@ pub mod verifier_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -350,23 +328,18 @@ pub mod verifier_service_server {
                 "/karma_coin.verifier.VerifierService/SendVerificationCode" => {
                     #[allow(non_camel_case_types)]
                     struct SendVerificationCodeSvc<T: VerifierService>(pub Arc<T>);
-                    impl<
-                        T: VerifierService,
-                    > tonic::server::UnaryService<super::SendVerificationCodeRequest>
-                    for SendVerificationCodeSvc<T> {
+                    impl<T: VerifierService>
+                        tonic::server::UnaryService<super::SendVerificationCodeRequest>
+                        for SendVerificationCodeSvc<T>
+                    {
                         type Response = super::SendVerificationCodeResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::SendVerificationCodeRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move {
-                                (*inner).send_verification_code(request).await
-                            };
+                            let fut = async move { (*inner).send_verification_code(request).await };
                             Box::pin(fut)
                         }
                     }
@@ -377,11 +350,10 @@ pub mod verifier_service_server {
                         let inner = inner.0;
                         let method = SendVerificationCodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -390,23 +362,17 @@ pub mod verifier_service_server {
                 "/karma_coin.verifier.VerifierService/VerifyNumber" => {
                     #[allow(non_camel_case_types)]
                     struct VerifyNumberSvc<T: VerifierService>(pub Arc<T>);
-                    impl<
-                        T: VerifierService,
-                    > tonic::server::UnaryService<super::VerifyNumberRequest>
-                    for VerifyNumberSvc<T> {
+                    impl<T: VerifierService> tonic::server::UnaryService<super::VerifyNumberRequest>
+                        for VerifyNumberSvc<T>
+                    {
                         type Response = super::VerifyNumberResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::VerifyNumberRequest>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move {
-                                (*inner).verify_number(request).await
-                            };
+                            let fut = async move { (*inner).verify_number(request).await };
                             Box::pin(fut)
                         }
                     }
@@ -417,28 +383,23 @@ pub mod verifier_service_server {
                         let inner = inner.0;
                         let method = VerifyNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        Ok(
-                            http::Response::builder()
-                                .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
-                                .body(empty_body())
-                                .unwrap(),
-                        )
-                    })
-                }
+                _ => Box::pin(async move {
+                    Ok(http::Response::builder()
+                        .status(200)
+                        .header("grpc-status", "12")
+                        .header("content-type", "application/grpc")
+                        .body(empty_body())
+                        .unwrap())
+                }),
             }
         }
     }

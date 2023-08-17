@@ -8,11 +8,15 @@ use base::karma_coin::karma_coin_verifier::{
     VerificationResult, VerifyNumberRequest, VerifyNumberRequestData, VerifyNumberResponse,
 };
 use base::server_config_service::ServerConfigService;
-use ed25519_dalek::Verifier;
 use http::{header, StatusCode};
 use prost::Message;
 use reqwest::Client;
 use serde::Deserialize;
+use sp_core::{
+    crypto::{AccountId32, Ss58Codec},
+    ed25519::{Pair, Public, Signature},
+    Pair as PairT,
+};
 use std::collections::HashMap;
 use xactor::*;
 
@@ -56,14 +60,12 @@ impl Handler<Verify> for VerifierService {
             return gen_verification_result(VerificationResult::MissingData).await;
         }
 
-        // verify request signature
-        use ed25519_dalek::ed25519::signature::Signature;
-        let signature = &Signature::from_bytes(req.signature.as_ref()).unwrap();
-        // todo: extract public key from ss58 user account id
-        let pub_key = &ed25519_dalek::PublicKey::from_bytes(&[0x1, 0x0]).unwrap();
+        let signature = Signature::from_slice(req.signature.as_ref()).unwrap();
+        let account_id = AccountId32::from_ss58check(&user_data.account_id).unwrap();
+        let pub_key = Public::from_raw(*account_id.as_ref());
 
         // verify request data signature
-        if pub_key.verify(req.data.as_ref(), signature).is_err() {
+        if Pair::verify(&signature, req.data, &pub_key) {
             return gen_verification_result(VerificationResult::InvalidSignature).await;
         };
 
