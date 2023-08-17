@@ -65,7 +65,7 @@ impl Handler<Verify> for VerifierService {
         let pub_key = Public::from_raw(*account_id.as_ref());
 
         // verify request data signature
-        if Pair::verify(&signature, req.data, &pub_key) {
+        if !Pair::verify(&signature, req.data, &pub_key) {
             return gen_verification_result(VerificationResult::InvalidSignature).await;
         };
 
