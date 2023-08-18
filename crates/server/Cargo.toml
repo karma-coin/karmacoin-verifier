@@ -69,5 +69,8 @@ features = ["std", "u64_backend", "serde"]
 version = "1"
 features = ["serde"]
 
+[dependencies.sp-rpc]
+git = "https://github.com/karma-coin/karmachain"
+
 [dev-dependencies]
 nix = "0.26.2"
