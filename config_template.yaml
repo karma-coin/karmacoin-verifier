@@ -2,9 +2,7 @@
 # These configs override the default config values
 
 verifier:
-  name: Verifier 1
-  private_key: [xxx]
-  public_key: [xxx]
+  name: Verifier 2
   key_password: [xxx]
   # verifier mnemonic
   key_mnemonic: [xxx]
