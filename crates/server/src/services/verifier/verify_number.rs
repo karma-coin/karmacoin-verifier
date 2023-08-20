@@ -15,7 +15,7 @@ use serde::Deserialize;
 use sp_core::{
     crypto::{AccountId32, Ss58Codec},
     ed25519::{Pair, Public, Signature},
-    Pair as PairT,
+    Encode, Pair as PairT,
 };
 use std::collections::HashMap;
 use xactor::*;
@@ -142,10 +142,18 @@ impl Handler<Verify> for VerifierService {
             }
         }
 
-        // todo: generate scale-encoded signed data to be included in signup tx
+        let phone_number_hash =
+            sp_core::hashing::blake2_512(user_data.phone_number.clone().as_bytes());
+        let verification_evidence = sp_rpc::verifier::VerificationEvidence {
+            verifier_public_key: self.key_pair.unwrap().public(),
+            account_id: account_id,
+            username: user_data.user_name,
+            phone_number_hash: phone_number_hash,
+        };
+        let bytes = verification_evidence.encode();
 
         let response = VerifyNumberResponse {
-            data: vec![],
+            data: self.key_pair.unwrap().sign(&bytes).0.to_vec(),
             result: VerificationResult::Verified as i32,
         };
 
