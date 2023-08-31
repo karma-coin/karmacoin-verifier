@@ -100,7 +100,7 @@ docker build . -t karmacoin-verifier
 To use configuration file from host machine, mount it to `/config.yaml` inside the container. And than run the container. Both actions can be done with the following command:
 
 ```bash
-docker run -d -p 9080:9080 --name karmacoin-verifier --mount type=bind,source="$(pwd)"/config.yaml,target=/config.yaml karmacoin-verifier
+docker run -d -p 9080:9080 --name karmacoin-verifier --mount type=bind,source="$(pwd)"/config.yaml,target=/config.yaml teamkarmacoin/karmacoin-verifier
 ```
 
 ---
