@@ -90,6 +90,19 @@ Xactor (unlike Actix) gives us nice and clean async syntax for actor messages. H
 - `server` - Server implementation.
 - `server-app` - Simple console server app.
 
+### Docker 
+To build docker image
+
+```bash
+docker build . -t karmacoin-verifier
+```
+
+To use configuration file from host machine, mount it to `/config.yaml` inside the container. And than run the container. Both actions can be done with the following command:
+
+```bash
+docker run -d -p 9080:9080 --name karmacoin-verifier --mount type=bind,source="$(pwd)"/config.yaml,target=/config.yaml karmacoin-verifier
+```
+
 ---
 
 Copyright (c) 2023 by the KarmaCoin Authors. This work is licensed under the [KarmaCoin License](https://github.com/karma-coin/.github/blob/main/LICENSE).
