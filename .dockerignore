@@ -1,0 +1,6 @@
+.devcontainer
+.github
+.vscode
+scripts
+target
+config.yaml
