@@ -42,10 +42,6 @@ impl Handler<SendVerificationCode> for VerifierService {
             ));
         }
 
-        if number.starts_with('+') && number.len() > 2 {
-            number = number[1..].to_string();
-        }
-
         let url = format!(
             "https://verify.twilio.com/v2/Services/{serv_id}/Verifications",
             serv_id = self.twilio_service_id.as_ref().unwrap(),
