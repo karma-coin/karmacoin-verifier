@@ -19,6 +19,7 @@ pub(crate) struct SendVerificationCode(pub SendVerificationCodeRequest);
 #[derive(Deserialize, Debug, Clone)]
 pub struct OTPVerifyRequest {
     pub sid: String,
+    pub status: String,
 }
 
 /// Request to complete verification and sign up
@@ -31,7 +32,7 @@ impl Handler<SendVerificationCode> for VerifierService {
     ) -> Result<SendVerificationCodeResponse> {
         let req = msg.0;
 
-        let mut number = req.mobile_number.clone();
+        let number = req.mobile_number.clone();
         info!("sending verification code to: {}", number);
 
         if number.is_empty() {
@@ -74,7 +75,10 @@ impl Handler<SendVerificationCode> for VerifierService {
         return match res {
             Ok(response) => {
                 if response.status() != StatusCode::CREATED {
-                    info!("twilio response status code != 201");
+                    info!(
+                        "failed. twilio response status code != 201: {}",
+                        response.status()
+                    );
                     return Ok(create_response(
                         SendVerificationCodeResult::Failed,
                         Some("Code verifier failed to send".into()),
@@ -85,7 +89,10 @@ impl Handler<SendVerificationCode> for VerifierService {
                 let data = response.json::<OTPVerifyRequest>().await;
                 return match data {
                     Ok(result) => {
-                        info!("Send verification code via whatsapp");
+                        info!(
+                            "Send verification code via whatsapp. Session id: {}. Status: {}",
+                            result.sid, result.status
+                        );
                         Ok(create_response(
                             SendVerificationCodeResult::Sent,
                             None,

@@ -146,9 +146,9 @@ impl Handler<Verify> for VerifierService {
             sp_core::hashing::blake2_512(user_data.phone_number.clone().as_bytes());
         let verification_evidence = sp_rpc::verifier::VerificationEvidence {
             verifier_public_key: self.key_pair.unwrap().public(),
-            account_id: account_id,
+            account_id,
             username: user_data.user_name,
-            phone_number_hash: phone_number_hash,
+            phone_number_hash,
         };
         let bytes = verification_evidence.encode();
 
