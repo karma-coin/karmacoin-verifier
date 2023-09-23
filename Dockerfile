@@ -1,4 +1,4 @@
-FROM rust:1.67.0-slim-buster AS builder
+FROM rust:1.70.0-slim-buster AS builder
 
 RUN apt update \
     && apt install -y libssl-dev pkg-config protobuf-compiler openssl ca-certificates \
