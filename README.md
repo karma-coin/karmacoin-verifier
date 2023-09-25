@@ -51,8 +51,8 @@ cargo build
 ### Running a release build
 
 ```bash
-cargo build -- release
-./target/debug/server-app
+cargo build --release
+./target/release/server-app
 ```
 ---
 
@@ -94,13 +94,13 @@ Xactor (unlike Actix) gives us nice and clean async syntax for actor messages. H
 To build docker image
 
 ```bash
-docker build . -t karmacoin-verifier
+docker build . -t teamkarmacoin/karmacoin-verifier
 ```
 
 To use configuration file from host machine, mount it to `/config.yaml` inside the container. And than run the container. Both actions can be done with the following command:
 
 ```bash
-docker run -d -p 9080:9080 --name karmacoin-verifier --mount type=bind,source="$(pwd)"/config.yaml,target=/config.yaml karmacoin-verifier
+docker run -d -p 9080:9080 --name karmacoin-verifier --mount type=bind,source="$(pwd)"/config.yaml,target=/config.yaml teamkarmacoin/karmacoin-verifier
 ```
 
 ---
