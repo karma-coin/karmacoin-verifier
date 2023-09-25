@@ -14,7 +14,10 @@ RUN mkdir /out && cp target/release/server-app ../out/server-app
 
 FROM debian:stable-20210902-slim AS runtime
 
-RUN apt update && apt install curl net-tools -y
+RUN apt update \
+    && apt install -y libssl-dev pkg-config protobuf-compiler openssl ca-certificates \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY --from=builder /out/ /
 
